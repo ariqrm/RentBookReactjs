@@ -1,0 +1,71 @@
+{
+  "books": [
+    {
+      "id": 3,
+      "title": "The Promised Neverland K",
+      "description": "Yakusoku no Neverland, yang diterbitkan di Indonesia dengan judul The Promised Neverland, adalah sebuah seri manga Jepang yang ditulis oleh Kaiu Shirai dan diilustrasikan oleh Posuka Demizu. 2",
+      "image": "https://images-na.ssl-images-amazon.com/images/I/81GIb6GMhRL.jpg",
+      "date_released": "2016-01-08T17:00:00.000Z",
+      "genre": "mistery",
+      "status": "available"
+    },
+    {
+      "id": 4,
+      "title": "The Promised Neverland X",
+      "description": "Yakusoku no Neverland, yang diterbitkan di Indonesia dengan judul The Promised Neverland, adalah sebuah seri manga Jepang yang ditulis oleh Kaiu Shirai dan diilustrasikan oleh Posuka Demizu. 4",
+      "image": "https://images-na.ssl-images-amazon.com/images/I/81GIb6GMhRL.jpg",
+      "date_released": "2017-11-30T17:00:00.000Z",
+      "genre": "mistery",
+      "status": "borrowed"
+    },
+    {
+      "id": 6,
+      "title": "The Promised Neverland 5",
+      "description": "Yakusoku no Neverland, yang diterbitkan di Indonesia dengan judul The Promised Neverland, adalah sebuah seri manga Jepang yang ditulis oleh Kaiu Shirai dan diilustrasikan oleh Posuka Demizu. ",
+      "image": "https://images-na.ssl-images-amazon.com/images/I/81GIb6GMhRL.jpg",
+      "date_released": "2018-05-31T17:00:00.000Z",
+      "genre": "mistery",
+      "status": "available"
+    },
+    {
+      "id": 7,
+      "title": "The Promised Neverland 6",
+      "description": "Yakusoku no Neverland, yang diterbitkan di Indonesia dengan judul The Promised Neverland, adalah sebuah seri manga Jepang yang ditulis oleh Kaiu Shirai dan diilustrasikan oleh Posuka Demizu. ",
+      "image": "https://images-na.ssl-images-amazon.com/images/I/81GIb6GMhRL.jpg",
+      "date_released": "2018-11-30T17:00:00.000Z",
+      "genre": "mistery",
+      "status": "borrowed"
+    },
+    {
+      "id": 8,
+      "title": "The Promised Neverland 7",
+      "description": "Yakusoku no Neverland, yang diterbitkan di Indonesia dengan judul The Promised Neverland, adalah sebuah seri manga Jepang yang ditulis oleh Kaiu Shirai dan diilustrasikan oleh Posuka Demizu. ",
+      "image": "https://images-na.ssl-images-amazon.com/images/I/81GIb6GMhRL.jpg",
+      "date_released": "2020-06-08T17:00:00.000Z",
+      "genre": "mistery",
+      "status": "available"
+    },
+    {
+      "id": 9,
+      "title": "The Promised Neverland 8",
+      "description": "Yakusoku no Neverland, yang diterbitkan di Indonesia dengan judul The Promised Neverland, adalah sebuah seri manga Jepang yang ditulis oleh Kaiu Shirai dan diilustrasikan oleh Posuka Demizu. ",
+      "image": "https://images-na.ssl-images-amazon.com/images/I/81GIb6GMhRL.jpg",
+      "date_released": "2020-06-08T17:00:00.000Z",
+      "genre": "mistery",
+      "status": "available"
+    },
+    {
+      "id": 10,
+      "title": "The Promised Neverland 9",
+      "description": "Yakusoku no Neverland, yang diterbitkan di Indonesia dengan judul The Promised Neverland, adalah sebuah seri manga Jepang yang ditulis oleh Kaiu Shirai dan diilustrasikan oleh Posuka Demizu. ",
+      "image": "https://images-na.ssl-images-amazon.com/images/I/81GIb6GMhRL.jpg",
+      "date_released": "2020-06-08T17:00:00.000Z",
+      "genre": "mistery",
+      "status": "available"
+    }
+  ],
+  "comments": [],
+  "profile": {
+    "name": "typecode"
+  }
+}

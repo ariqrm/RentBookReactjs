@@ -1,0 +1,17 @@
+import React, { Fragment } from 'react'
+// import { Card as BCard, Row, Spinner } from 'react-bootstrap'
+import './Card.css'
+
+const Card = (props) => {
+    return (
+        <Fragment>
+                <div className="myCard">
+                <img src={props.data.image} alt="" onClick={() => props.viewDitail(props.data.id)} />
+                    <p className="product-title">{props.data.title.substr(0, 25) + '...'}</p>
+                    <p className="product-desc">{props.data.description.substr(0,100)+'...'}</p>
+                </div>
+        </Fragment>
+    )
+}
+
+export default Card;

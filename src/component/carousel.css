@@ -1,0 +1,12 @@
+.custom-tag {
+    max-width: 100%;
+    height: 350px;
+    background: black;
+    margin-bottom: 10%;
+}
+.custom-tag img {
+    height: auto;
+    width: -webkit-fill-available;
+    position: relative;
+    align-content: center;
+}
