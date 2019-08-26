@@ -22,7 +22,9 @@ class Register extends Component {
                     user: response.data
                 })
                 if(response.data.success === true){
-                    window.location.replace("/home")
+                    const dataUser = this.state.formData
+                    this.props.getPostAPILogin(dataUser)
+                    // window.location.replace("/home")
                 }
             })
             .catch(err => console.log(err))
@@ -40,7 +42,14 @@ class Register extends Component {
         console.log(this.state.formData)
         this.getPostAPI()
     }
+    handleDataAuth = () => {
+        const auth = localStorage.getItem('Token=')
+        if (auth) {
+            document.location.replace("http://localhost:3030/home")
+        }
+    }
     render() {
+        this.handleDataAuth()
         return (
             <Fragment>
                 <div className="Register">

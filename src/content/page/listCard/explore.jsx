@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import Card from '../../../component/Card/Card'
 import { GlobalConsumer } from '../../../context/context'
-import Navbar from '../../../component/Navbar/Navbar'
 import './listCard.css'
 import PageButton from './pageButton';
 
@@ -12,10 +11,9 @@ class Eplore extends Component {
     render() {
         return (
             <Fragment>
-                <Navbar />
                 <div className="boxContent">
-                    <button name="available" onClick={this.props.handleSubmit}>available</button>
-                    <button name="borrowed" onClick={this.props.handleSubmit}>borrowed</button>
+                    <button className="btnAvailable" name="available" onClick={this.props.handleSubmit}>available</button>
+                    <button className="btnBorrow" name="borrowed" onClick={this.props.handleSubmit}>borrowed</button>
                     <h1 style={{ color: "grey", textAlign: "center" }}>List Book</h1 >
                     {
                         this.props.state.book.map(book => {

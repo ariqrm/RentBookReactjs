@@ -7,48 +7,54 @@ const Provider = RootContext.Provider;
 const GlobalProvider = (Childern) => {
     return (
         class ParentComp extends Component {
-            state = {
-                users: [],
-                alluser: [],
-                years: [],
-                transaction: [],
-                title: "",
-                page: 1,
-                coloum: "B.Title",
-                token: "",
-                user: {
-                    id: 4,
-                    Email: "",
+            constructor(props){
+                super(props)
+                this.state = {
+                    users: [],
+                    alluser: [],
+                    years: [],
+                    transaction: [],
+                    title: "",
+                    page: 1,
+                    coloum: "B.Title",
+                    status: "available",
+                    token: "",
                     Username: "",
-                    Full_name: "",
-                    access: "",
-                    create_at: "",
-                    update_at: ""
-                },
-                modal: false,
-                book: [],
-                genre: [],
-                formgenre: {
-                    id: 1,
-                    NameOfGenre: ""
-                },
-                formDataUser: {
-                    email: "",
-                    username: "",
-                    full_name: "",
-                    password: ""
-                },
-                formData: {
-                    Image: "",
-                    Title: "",
-                    DateReleased: "",
-                    id_genre: 1,
-                    id_status: 2,
-                    Description: ""
-                },
-                isUpdateData: false,
-                sidebar: true
+                    user: {
+                        Email: "",
+                        Full_name: "",
+                        Username: "",
+                        access: "",
+                        create_at: "",
+                        id: 4,
+                        update_at: ""
+                    },
+                    modal: false,
+                    book: [],
+                    genre: [],
+                    formgenre: {
+                        id: 1,
+                        NameOfGenre: ""
+                    },
+                    formDataUser: {
+                        email: "",
+                        username: "",
+                        full_name: "",
+                        password: ""
+                    },
+                    formData: {
+                        Image: "",
+                        Title: "",
+                        DateReleased: "",
+                        id_genre: 1,
+                        id_status: 2,
+                        Description: ""
+                    },
+                    isUpdateData: false,
+                    sidebar: false
+                }
             }
+            
             openNav = () => {
                 document.getElementById("mySidenav").style.width = "250px";
                 document.getElementById("main").style.marginLeft = "250px";
@@ -62,15 +68,15 @@ const GlobalProvider = (Childern) => {
                 document.getElementById("mySidenav").style.display = "none";
             }
             handleSidebar = () => {
-                if (this.state.sidebar === true) {
+                if (this.state.sidebar === false) {
                     this.openNav()
                     this.setState({
-                        sidebar: false
+                        sidebar: true
                     })
                 } else {
                     this.closeNav()
                     this.setState({
-                        sidebar: true
+                        sidebar: false
                     })
                 }
             }
@@ -88,7 +94,8 @@ const GlobalProvider = (Childern) => {
                     }
                 } else {
                     this.setState({
-                        modal: false
+                        modal: false,
+                        sidebar: false
                     })
                 }
             }
@@ -120,10 +127,10 @@ const GlobalProvider = (Childern) => {
                     })
             }
             getPostAPI = (title, coloum, page, available) => {
-                const mTitle = title || " "
-                const mColoum = coloum || "B.Title"
-                const mPage = page || 1
-                const mavailable = available || "available"
+                const mTitle = title || this.state.title
+                const mColoum = coloum || this.state.coloum
+                const mPage = page || this.state.page
+                const mavailable = available || this.state.status
                 Axios.get(`http://localhost:3010/books?search=${mTitle}&available=${mavailable}&coloum=${mColoum}&sort=id&by=DESC&limit=12&page=${mPage}`)
                     .then((respons) => {
                         // console.log(respons);
@@ -131,12 +138,13 @@ const GlobalProvider = (Childern) => {
                             book: respons.data.data,
                             coloum: mColoum,
                             page: mPage,
-                            title: mTitle
+                            title: mTitle,
+                            status: mavailable
                         })
                     })
             }
             getSearchPostAPI = () => {
-                Axios.get(`http://localhost:3010/books?search=${this.state.title}&coloum=${this.state.coloum}&sort=id&by=DESC&limit=12&page=${this.state.page}`)
+                Axios.get(`http://localhost:3010/books?search=${this.state.title}&available=${this.state.status}&coloum=${this.state.coloum}&sort=id&by=DESC&limit=12&page=${this.state.page}`)
                     .then((respons) => {
                         this.setState({
                             book: respons.data.data
@@ -168,13 +176,13 @@ const GlobalProvider = (Childern) => {
                         
                     } else {
                         let page = this.state.page + 1
-                        this.getPostAPI(" ", "B.Title", page)
+                        this.getPostAPI(this.state.title, this.state.coloum, page, this.state.status)
                     }
                 }
                 if (action.type === 'MINUS_PAGE') {
                     if (this.state.page > 1) {
                         let page = this.state.page - 1
-                        this.getPostAPI(" ", "B.Title", page)
+                        this.getPostAPI(this.state.title, this.state.coloum, page, this.state.status)
                     }else{
                         return this.getPostAPI()
                     }
@@ -185,8 +193,8 @@ const GlobalProvider = (Childern) => {
                 newColoum = event.target.name
                 var newTitle = { ...this.state.title }
                 newTitle = event.target.value
-                console.log('form change', event.target.value)
-                console.log('name change', event.target.name)
+                // console.log('form change', event.target.value)
+                // console.log('name change', event.target.name)
                 this.setState({
                     title: newTitle,
                     coloum: newColoum
@@ -196,7 +204,8 @@ const GlobalProvider = (Childern) => {
                 console.log('mount')
                 this.getPostAPI()
                 this.getGenreAPI()
-                this.getTransactionAPI()
+                // this.handleDataAuth()
+                // this.getTransactionAPI()
             }
             handleSubmit = (event) => {
                 const page = 1
@@ -213,9 +222,10 @@ const GlobalProvider = (Childern) => {
                 } else if (event.target.name === "B.DateReleased") {
                     this.getPostAPI(event.target.value, event.target.name, page)
                 } else if (event.target.name === "borrowed") {
-                    this.getPostAPI(" ", null, page, event.target.name)
+                    // this.getPostAPI(this.state.title, this.state.coloum, this.state.page, event.target.name)
+                    this.getPostAPI(this.state.title, this.state.coloum, page, event.target.name)
                 } else if (event.target.name === "available") {
-                    this.getPostAPI(" ", null, page, event.target.name)
+                    this.getPostAPI(this.state.title, this.state.coloum, page, event.target.name)
                 }
             }
             handleForm = (event) => {
@@ -232,17 +242,34 @@ const GlobalProvider = (Childern) => {
                     .then((response) => {
                         console.log(response.data.data.token);
                         this.setState({
-                            user: response.data,
-                            token: response.data.data.token
+                            user: response.data.data.data,
+                            users: response.data.data,
+                            Username: response.data.data.data.Username
                         })
                         if (response.data.success === true) {
-                            document.cookie = 'Token=' + this.state.token
+                            const myToken = response.data.data.token
+                            const myData = response.data.data.data
+                            localStorage.setItem('Token=', JSON.stringify(myToken));
+                            localStorage.setItem('Data=', JSON.stringify(myData));
+                            this.handleDataAuth()
+                            // document.cookie = 'Token=' + response.data.data.token
                             window.location.replace('/home')
+                            // var retrievedObject = localStorage.getItem('Token=');
+                            // console.log('retrievedObject: ', JSON.parse(retrievedObject));
                             // this.props.state.user = response.data.data.data
                         }
-                        console.log(this.state.user);
                     })
                     .catch(err => console.log(err))
+            }
+            handleDataAuth = () => {
+                const data = JSON.parse(localStorage.getItem('Data='))
+                this.setState({
+                    user: data
+                })
+                const auth = localStorage.getItem('Token=')
+                if (!auth) {
+                    document.location.replace("http://localhost:3030/login")
+                }
             }
             render() {
                 return (
@@ -256,7 +283,8 @@ const GlobalProvider = (Childern) => {
                             handleForm: this.handleForm,
                             handleSidebar: this.handleSidebar,
                             getYearAPI: this.getYearAPI,
-                            getPostAPILogin: this.getPostAPILogin
+                            getPostAPILogin: this.getPostAPILogin,
+                            handleDataAuth: this.handleDataAuth
                         }
                     }>
                         <Childern {...this.props} />

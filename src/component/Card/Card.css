@@ -54,3 +54,21 @@
     margin-bottom: 10px;
     font-size: 15px;
 }
+.product-status {
+    color: white;
+    position: relative;
+    margin: 0px;
+    text-align: center;
+    padding: 1%;
+    margin-bottom: 10px;
+    font-size: 15px;
+
+    font-weight: bold;
+}
+.product-status#available {
+    background-color: #40f00b;
+}
+
+.product-status#borrowed {
+    background-color: #d9f00b;
+}

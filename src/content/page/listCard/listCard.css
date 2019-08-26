@@ -1,6 +1,6 @@
 .boxContent {
     position: absolute;
-    margin-top: 4%;
+    margin-top: 1%;
     width: 100%;
     height: auto;
     margin-bottom: 10%;
@@ -8,4 +8,26 @@
     align-content: center;
     background-color: #fff;
     box-sizing: border-box;
+}
+.btnAvailable {
+    color: #383838;
+    background-color: #40f00b;
+    border: none;
+    outline: 0;
+    padding: 12px;
+    border-radius: 5px;
+    position: absolute;
+    top: 1%;
+    left: 5%;
+}
+.btnBorrow {
+    color: #383838;
+    background-color: #d9f00b;
+    border: none;
+    outline: 0;
+    padding: 12px;
+    border-radius: 5px;
+    position: absolute;
+    top: 1%;
+    left: 13%;
 }

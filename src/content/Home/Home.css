@@ -27,6 +27,7 @@ span#burger:hover {
     transition: .5s;
 }
 span.library {
+    cursor: pointer;
     position: absolute;
     width: 187px;
     height: 47px;
@@ -38,6 +39,7 @@ span.library {
     color: #424242;
 }
 .navigation img {
+    cursor: pointer;
     height: 33px;
     width: 33px;
 }

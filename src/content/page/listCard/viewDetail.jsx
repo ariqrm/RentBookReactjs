@@ -35,6 +35,7 @@ class ViewDetail extends Component {
         window.location.reload()
     }
     componentDidMount() {
+        this.props.handleDataAuth()
         let myId = this.props.match.params.id;
         Axios.get(`http://localhost:3010/books/${myId}`)
         .then(result => {
@@ -93,8 +94,10 @@ class ViewDetail extends Component {
         })
     }
     handleUpdate = () => {
+        const token = JSON.parse(localStorage.getItem("Token="))
         let myId = this.props.match.params.id;
-        Axios.patch(`http://localhost:3010/books/${myId}`, this.state.formData)
+        Axios.patch(`http://localhost:3010/books/${myId}`, this.state.formData,
+            { headers: { Authorization: token } })
             .then(result => {
                 console.log(result.data)
                 if(result.data.succes === true){
@@ -109,8 +112,10 @@ class ViewDetail extends Component {
             })
     }
     handleRemove=()=>{
-        let myId = this.props.match.params.id
-        Axios.delete(`http://localhost:3010/books/${myId}`)
+        const token = JSON.parse(localStorage.getItem("Token="))
+        let myId = this.state.dataApi.id
+        Axios.delete(`http://localhost:3010/books/${myId}`,
+            { headers: { Authorization: token } })
         .then(result => {
             console.log(result.data)
             if (result.data.succes === true) {

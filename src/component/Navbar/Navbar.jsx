@@ -9,11 +9,15 @@ import { GlobalConsumer } from '../../context/context';
 import ModalExample from '../Modal/Add';
 
 class Navbar extends Component {
-    handleHome = ()=>{
+    handleHome = () => {
+        document.location.replace("http://localhost:3030/home")
+    }
+    handleReload = () => {
         document.location.reload()
     }
     componentDidMount(){
         this.props.getYearAPI()
+        this.props.handleDataAuth()
     }
     render() {
         return (
@@ -21,15 +25,15 @@ class Navbar extends Component {
                 <div id="mySidenav" className="sidenav">
                     <img src="http://clws.karnataka.gov.in/assets/icons/manager.png" alt=""/>
                     <p>{this.props.state.user.Username}</p>
-                    <Link onClick={this.props.handleSidebar} to="/home/explore">Explore</Link>
-                    
+                    <p>{console.log(this.props.state.user)}</p>
+                    <Link onClick={this.props.handleSidebar} to="#">Explore</Link>
                     <Link onClick={this.props.handleSidebar} to="/home/history">History</Link>
-                    <ModalExample />
+                    <ModalExample onClick={this.props.handleSidebar} />
                 </div>
                 <nav className="navigation">
                     <span id="burger" onClick={this.props.handleSidebar}>&#9776;</span>
                     <div className="dropdown">
-                        <Link to="#" onClick={this.handleHome}>
+                        <Link to="#" onClick={this.handleReload}>
                             <button className="dropbtn">All Category <FontAwesomeIcon icon={faSortDown} /></button>
                         </Link>
                         <div className="dropdown-content">
@@ -46,7 +50,7 @@ class Navbar extends Component {
                         </div>
                     </div>
                     <div className="dropdown">
-                    <Link to="#" onClick={this.handleHome}>
+                    <Link to="#" onClick={this.handleReload}>
                         <button className="dropbtn">All Time <FontAwesomeIcon icon={faSortDown} /></button>
                     </Link>
                         <div className="dropdown-content">
@@ -69,8 +73,8 @@ class Navbar extends Component {
                         </div>
                     </div>
                     <SearchBox />
-                    <img src="https://s3-alpha-sig.figma.com/img/5ef4/f6ec/e84f39e17cc61b2c69a33b9ad6d7736e?Expires=1567382400&Signature=BIb3Rr5PdM4FgT80aIXHtY-1waIiqI3usAtfDL79yrRiUkYzQDJbXcnFgtqcRMfZe2tglbEO2yRBc-vbg5e4FetONSgBVInok4ow7OzjSep5aqbuzcVUoGbqY91URULF1rPQbfqlaQS0JKAVsZkNqGrpnFzFLVQNIQek~vMu5A6oRw2fqKchwZbuEdTY37mRx9G6W5gG1uISPGTreyWYTkkz93Op4-j30UHkcZMGDpmn6qbiDzDdK5mk1He5aqAugRNqEGuEbs3WfvgrDviUeXeLeWPVuwVuQXbbxbWYD8AMBkcTGZPOfhDM4znqjO~K-37~~ndicWGy~8s7yDZ6fg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA" alt="" />                    
-                    <span className="library" >Library</span>
+                    <img onClick={this.handleHome} src="https://s3-alpha-sig.figma.com/img/5ef4/f6ec/e84f39e17cc61b2c69a33b9ad6d7736e?Expires=1567382400&Signature=BIb3Rr5PdM4FgT80aIXHtY-1waIiqI3usAtfDL79yrRiUkYzQDJbXcnFgtqcRMfZe2tglbEO2yRBc-vbg5e4FetONSgBVInok4ow7OzjSep5aqbuzcVUoGbqY91URULF1rPQbfqlaQS0JKAVsZkNqGrpnFzFLVQNIQek~vMu5A6oRw2fqKchwZbuEdTY37mRx9G6W5gG1uISPGTreyWYTkkz93Op4-j30UHkcZMGDpmn6qbiDzDdK5mk1He5aqAugRNqEGuEbs3WfvgrDviUeXeLeWPVuwVuQXbbxbWYD8AMBkcTGZPOfhDM4znqjO~K-37~~ndicWGy~8s7yDZ6fg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA" alt="" />                    
+                    <span onClick={this.handleHome} className="library" >Library</span>
                 </nav> 
             </Fragment>
         )

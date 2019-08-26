@@ -17,24 +17,6 @@ const NoMatch = () => {
 }
 
 class Home extends Component {
-    auth = () => {
-        const token = document.cookie.split('=')
-        if(token[0] === 'Token'){
-            // return console.log('s',token[1])
-            return <p>babababab</p>
-            // return <Navbar />
-        } else {
-            return <p>kakakakakak</p>
-        }
-    }
-    // componentDidMount() {
-    //     const token = document.cookie.split('=')
-    //     if (token[0] === 'Token') {
-    //         document.location = "https://www.w3schools.com"
-    //     }else{
-    //         this.props.path.push('/login')
-    //     }
-    // }
     render () {
         return (
             <Fragment>

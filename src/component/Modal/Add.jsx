@@ -25,7 +25,10 @@ export class ModalExample extends React.Component {
         window.location.reload()
     }
     getPostAPI = () => {
-        Axios.post(`http://localhost:3010/books/`, this.state.formData)
+        const token = JSON.parse(localStorage.getItem("Token="))
+        Axios.post(`http://localhost:3010/books/`, this.state.formData, 
+            { headers: { Authorization: token }}
+        )
             .then((response) => {
                 console.log(response);
                 this.setState({
@@ -38,8 +41,8 @@ export class ModalExample extends React.Component {
     handleAddBook = (event) => {
         var newFormData = { ...this.state.formData };
         newFormData[event.target.name] = event.target.value;
-        console.log('form change', event.target.value);
-        console.log('name change', event.target.name);
+        // console.log('form change', event.target.value);
+        // console.log('name change', event.target.name);
         this.setState({
             formData: newFormData
         })

@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import Card from '../../../component/Card/Card'
+// import Eplore from './explore'
 import { GlobalConsumer } from '../../../context/context'
 import Navbar from '../../../component/Navbar/Navbar'
 import './listCard.css'
@@ -16,14 +17,16 @@ class listCard extends Component {
                 <Navbar />
                 <Caraosel/>
                 <div className="boxContent">
+                    <button className="btnAvailable" name="available" onClick={this.props.handleSubmit}>available</button>
+                    <button className="btnBorrow" name="borrowed" onClick={this.props.handleSubmit}>borrowed</button>
                     <h1 style={{ color: "grey", textAlign: "center" }}>List Book</h1 >
                     {
                         this.props.state.book.map(book => {
-                            return <Card key={book.id} data={book} viewDitail={this.handleViewDetail} />
+                            return <Card key={book.id} data={book} viewDitail={this.handleViewDetail} remove={this.handleRemove} update={this.handleUpdate} />
                         })
                     }
-                </div>
                     <PageButton />
+                </div>
             </Fragment>
         )
     }

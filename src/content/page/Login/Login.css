@@ -43,39 +43,6 @@
     top: 12px;
 }
 
-.hero-text2 p {
-    /* Book is a window to the world */
-    position: absolute;
-    width: 808px;
-    height: 318px;
-    left: 56px;
-    top: 88px;
-
-    font-weight: bold;
-    font-family: Airbnb Cereal App;
-    font-size: 69px;
-    line-height: 83px;
-
-    color: #F9F9F9;
-
-}
-
-.hero-text p {
-    position: absolute;
-    width: 378px;
-    height: 30px;
-    left: 29px;
-    top: 850px;
-
-    font-family: Open Sans;
-    font-style: normal;
-    font-weight: bold;
-    font-size: 18px;
-    line-height: 25px;
-
-    color: #FFFFFF;
-
-}
 .box {
     position: absolute;
     width: 378px;
@@ -206,4 +173,40 @@
     line-height: 22px;
     text-decoration: none;
     color: #424242;
+}
+.hero-text2 p {
+    /* Book is a window to the world */
+    position: absolute;
+    width: 808px;
+    height: 318px;
+    left: 56px;
+    top: 88px;
+
+    text-shadow: 1px 1px 10px #000000;
+    /* h-shadow v-shadow blur-radius  */
+    font-weight: bold;
+    font-family: Airbnb Cereal App;
+    font-size: 69px;
+    line-height: 83px;
+
+    color: #F9F9F9;
+
+}
+
+.hero-text p {
+    position: absolute;
+    width: 378px;
+    height: 30px;
+    left: 29px;
+    top: 850px;
+
+    text-shadow: 1px 1px 10px #000000;
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 25px;
+
+    color: #FFFFFF;
+
 }

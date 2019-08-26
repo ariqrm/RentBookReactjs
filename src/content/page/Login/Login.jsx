@@ -31,7 +31,14 @@ class Login extends Component {
         const dataUser = this.state.formData
         this.props.getPostAPILogin(dataUser)
     }
+    handleDataAuth = () => {
+        const auth = localStorage.getItem('Token=')
+        if (auth) {
+            document.location.replace("http://localhost:3030/home")
+        }
+    }
     render() {
+        this.handleDataAuth()
         return (
             <Fragment>
                 <div className="Login">
@@ -65,10 +72,13 @@ class Login extends Component {
                             <input type="password" name="password" onChange={this.handleLogin} required />
                             <label>Password</label>
                         </div>
-                        <div>
-                            <input type="checkbox" name="rememberMe" />
-                            <p>Remember me</p>
-                            <p>Forgot Password</p>
+                        <div style={{ textAlign: "right", marginBottom: "10%"}}>
+                            {/* <input type="checkbox" name="rememberMe" />
+                            <p>Remember me</p> */}
+                            <Link to="#" style={{ 
+                                textDecoration: "none",
+                                color: "grey"
+                                 }}>Forgot Password</Link>
                         </div>
                         <input type="submit" onClick={this.handleSubmit} name="" value="Login" />
                         <input type="button" onClick={()=>this.props.history.push(`/Register`)} value="Sign Up"/>
