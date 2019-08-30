@@ -1,19 +1,25 @@
 import React, { Component, Fragment } from 'react'
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Input, Label, FormGroup } from 'reactstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
-import Axios from 'axios';
 import './viewDetail.css'
-import { GlobalConsumer } from '../../../context/context';
+import { getBookId, deleteBook, updateBook, transaction } from '../../../redux/Actions/Books';
+import { getGenre } from '../../../redux/Actions/Genres';
+import { openModal, closeModal } from '../../../redux/Actions/Modals';
+import { connect } from 'react-redux';
+import ResponseModal from '../../../component/Modal/Response';
+import { userInfo } from '../../../redux/Actions/Users';
 
 class ViewDetail extends Component {
     state = {
+        getGenre: [],
         dataApi: [],
-        date_released: "",
+        date_released: "", //new Date().toISOString().split('T')[0],
         date: "",
         month: "",
         year: "",
+        data: [],
         formData: {
             date_released: "",
             description: "",
@@ -26,40 +32,46 @@ class ViewDetail extends Component {
         deleteData: false,
         editData: false,
         faildata: false,
-        transaction: false
+        transaction: false,
+        ResponseModal: false,
     }
     handleEdit = () => {
         this.setState({
-            editData: false
+            ResponseModal: false
         })
         window.location.reload()
     }
-    componentDidMount() {
-        this.props.handleDataAuth()
+    componentDidMount = async () => {
         let myId = this.props.match.params.id;
-        Axios.get(`http://localhost:3010/books/${myId}`)
-        .then(result => {
-            console.log(result.data.data[0].title)
-            let data = result.data.data
-            this.setState({
-                dataApi: data[0],
-                date_released: data[0].date_released.split("T")[0]
-            })
-            this.setState({
-                formData: this.state.dataApi,
-                date_released: this.state.date_released.split("-")
-            })
-            this.setState({
-                date: this.state.date_released[2],
-                month: this.state.date_released[1],
-                year: this.state.date_released[0]
-            })
-            this.handleBorrow()
+        await this.props.Genre();
+        await this.props.getBookId(myId);
+        await this.props.UserInfo()
+        let data = this.props.book.bookDetail
+        this.setState({
+            getGenre: this.props.genre.genreList,
+            dataApi: data[0],
+            date_released: data[0].date_released.split("T")[0],
         })
-        .catch(err => {
-            console.log(err)
+        const { getGenre, dataApi } = this.state
+        const genre_id = getGenre.map(genre => genre.NameOfGenre).indexOf(dataApi.genre) + 1
+        const rawDate = new Date(this.state.dataApi.date_released)
+        let year = rawDate.getFullYear()
+        let month = rawDate.getMonth() < 10 ? '0' + (rawDate.getMonth() + 1) : rawDate.getMonth() + 1
+        let date = rawDate.getDate() < 10 ? '0' + rawDate.getDate() : rawDate.getDate()
+        let date_released = year + '-' + month + '-' + date
+        this.setState({
+            formData: {
+                date_released: date_released,
+                description: this.state.dataApi.description,
+                genre: genre_id,
+                id: this.state.dataApi.id,
+                image: this.state.dataApi.image,
+                status: this.state.dataApi.status,
+                title: this.state.dataApi.title,
+            },
         })
-    }
+        this.handleBtn()
+    };
     open = () => {
         document.getElementById("btnborrow").style.display = "block";
         document.getElementById("btnreturn").style.display = "none";
@@ -70,195 +82,208 @@ class ViewDetail extends Component {
         document.getElementById("btnborrow").style.display = "none";
         document.getElementById("btnreturn").style.display = "block";
     }
-    handleBorrow = () => {
+    handleBtn = () => {
         if (this.state.dataApi.status === "available") {
             this.open()
-        } else {
+        } else
+        if (this.state.dataApi.status === "available") {
             this.close()
         }
     }
     back = () => {
         this.setState({
-            editData: false
+            ResponseModal: false
         })
         window.location.replace("/home")
     }
     handleForm = (event) => {
         var newFormData = { ...this.state.formData };
         newFormData[event.target.name] = event.target.value;
-        console.log('form ', event.target.value);
-        console.log('name ', event.target.name);
-        console.log('data ', this.state.formData);
         this.setState({
             formData: newFormData
         })
     }
     handleUpdate = () => {
-        const token = JSON.parse(localStorage.getItem("Token="))
-        let myId = this.props.match.params.id;
-        Axios.patch(`http://localhost:3010/books/${myId}`, this.state.formData,
-            { headers: { Authorization: token } })
-            .then(result => {
-                console.log(result.data)
-                if(result.data.succes === true){
+        const myId = this.props.match.params.id;
+        const data = this.state.formData
+        this.props.UpdateBook(myId, data)
+            .then((res) => {
+                const data = res.action.payload.data
+                if (data.succes) {
                     this.setState({
-                        editData: true
+                        ResponseModal: true,
+                        data: data,
+                    })
+                    this.props.closeModal()
+                } else {
+                    this.setState({
+                        ResponseModal: true,
+                        data: data,
+                    })
+                    this.props.closeModal()
+                }
+            })
+            .catch(err => {
+                const data = {
+                    message: "access denied",
+                }
+                this.setState({
+                    ResponseModal: true,
+                    data: data
+                })
+            })
+    }
+    handleRemove = () => {
+        const myId = this.props.match.params.id;
+        this.props.DeleteBook(myId)
+            .then((res) => {
+                const data = res.action.payload.data
+                if (data.succes) {
+                    this.setState({
+                        ResponseModal: true,
+                        data: data,
                     })
                 } else {
                     this.setState({
-                        faildata: true
+                        ResponseModal: true,
+                        data: data,
                     })
                 }
             })
-    }
-    handleRemove=()=>{
-        const token = JSON.parse(localStorage.getItem("Token="))
-        let myId = this.state.dataApi.id
-        Axios.delete(`http://localhost:3010/books/${myId}`,
-            { headers: { Authorization: token } })
-        .then(result => {
-            console.log(result.data)
-            if (result.data.succes === true) {
+            .catch(err => {
+                const data = {
+                    message: "access denied",
+                }
                 this.setState({
-                    deleteData: true
+                    ResponseModal: true,
+                    data: data
                 })
-            } else {
-                this.setState({
-                    faildata: true
-                })
-            }
-        })
+            })
     }
     handleTransaction=()=>{
-        let myId = { id_users: 13,id_book: this.props.match.params.id }
+        let myId = { 
+            id_users: this.props.user.userInfo.id,
+            id_book: this.props.match.params.id }
         const query = (this.state.dataApi.status === "available") ? `http://localhost:3010/transaction/borrow/` : `http://localhost:3010/transaction/return/`
-        Axios.post(query, myId)
-            .then(result => {
-                console.log(result.data)
-                if (result.data.success === true) {
+        this.props.Transaction(query, myId)
+            .then((res) => {
+                const data = res.action.payload.data
+                if (data.succes) {
                     this.setState({
-                        transaction: true
+                        ResponseModal: true,
+                        data: data,
                     })
+                    this.props.closeModal()
                 } else {
                     this.setState({
-                        faildata: true
+                        ResponseModal: true,
+                        data: data,
                     })
+                    this.props.closeModal()
                 }
+            })
+            .catch(err => {
+                const data = {
+                    message: "access denied",
+                }
+                this.setState({
+                    ResponseModal: true,
+                    data: data
+                })
             })
     }
     render() {
+        const { getGenre, dataApi, formData } = this.state
+        const rawDate = new Date(this.state.dataApi.date_released)
+        let year = rawDate.getFullYear()
+        let month = rawDate.getMonth() < 10 ? '0' + (rawDate.getMonth() + 1) : rawDate.getMonth() + 1
+        let date = rawDate.getDate() < 10 ? '0' + rawDate.getDate() : rawDate.getDate()
+        let date_released = year + '-' + month + '-' + date
         return (
             <Fragment>
                 <div>
-                    <Modal isOpen={this.state.faildata}>
-                        <ModalHeader style={{ textAlign: "center", fontWeight: "bold", color: "black" }}>Failed</ModalHeader>
-                        <ModalBody>
-                            <div style={{ textAlignLast: "center", color: "red", textAlign: "center" }} >
-                                <FontAwesomeIcon style={{ fontSize: "60px" }} icon={faCheckCircle} />
-                                <p style={{ textAlign: "center", fontWeight: "bold", color: "black" }}>Fail update data</p>
-                            </div>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button color="danger" className="ModalBtn" onClick={this.handleEdit}>Ok</Button>
-                        </ModalFooter>
-                    </Modal>
-                    <Modal isOpen={this.state.editData}>
-                        <ModalHeader style={{ textAlign: "center", fontWeight: "bold", color: "black" }}>Success</ModalHeader>
-                        <ModalBody>
-                            <div style={{ textAlignLast: "center", color: "green", textAlign: "center"}} >
-                                <FontAwesomeIcon style={{ fontSize: "60px"}} icon={ faCheckCircle } />
-                                <p style={{ textAlign: "center", fontWeight: "bold", color: "black" }}>Data Updated</p>
-                            </div>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button color="success" className="ModalBtn" onClick={this.handleEdit}>Ok</Button>
-                        </ModalFooter>
-                    </Modal>
-                    <Modal isOpen={this.state.transaction}>
-                        <ModalHeader style={{ textAlign: "center", fontWeight: "bold", color: "black" }}>Success</ModalHeader>
-                        <ModalBody>
-                            <div style={{ textAlignLast: "center", color: "green", textAlign: "center" }} >
-                                <FontAwesomeIcon style={{ fontSize: "60px" }} icon={faCheckCircle} />
-                                <p style={{ textAlign: "center", fontWeight: "bold", color: "black" }}>Data Updated</p>
-                            </div>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button color="success" className="ModalBtn" onClick={this.handleEdit}>Ok</Button>
-                        </ModalFooter>
-                    </Modal>
-                    <Modal isOpen={this.state.deleteData}>
-                        <ModalHeader style={{ textAlign: "center", fontWeight: "bold", color: "black" }}>Success</ModalHeader>
-                        <ModalBody>
-                            <div style={{ textAlignLast: "center", color: "green", textAlign: "center"}} >
-                                <FontAwesomeIcon style={{ fontSize: "60px"}} icon={ faCheckCircle } />
-                                <p style={{ textAlign: "center", fontWeight: "bold", color: "black" }}>Data Deleted</p>
-                            </div>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button color="success" className="ModalBtn" onClick={this.back}>Ok</Button>
-                        </ModalFooter>
-                    </Modal>
-                    <Modal isOpen={this.props.state.modal} toggle={this.props.toggle} size="lg">
-                        <ModalHeader style={{ fontWeight: "bold", color: "black" }} toggle={this.props.toggle} charCode="x">Edit Data</ModalHeader>
-                        <ModalBody>
-                            <div className="boxModal">
-                                <div>
-                                    <input onChange={this.handleForm} name="image" type="text" value={this.state.formData.image}  />
-                                    <label>Url image</label>
+                    <ResponseModal open={this.state.ResponseModal} data={this.state.data} />
+                    <Modal isOpen={this.props.modal.myModal } toggle={this.props.closeModal} size="lg">
+                        {/* <Form onSubmit={this.handleUpdate}> */}
+                            <ModalHeader style={{ fontWeight: "bold", color: "black" }} toggle={this.props.closeModal} charCode="x">Edit Data</ModalHeader>
+                            <ModalBody>
+                                <div className="boxModal">
+                                    <FormGroup>
+                                        <Input onChange={this.handleForm} name="image" type="text" value={formData.image} required />
+                                        <Label>Url image</Label>
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Input onChange={this.handleForm} name="title" type="text" value={formData.title} required />
+                                        <Label>Title</Label>
+                                    </FormGroup>
+                                    <FormGroup> 
+                                        <Input onChange={this.handleForm} name="date_released" type="date" required
+                                            defaultValue={date_released}
+                                            value={date_released}
+                                        // defaultValue={new Date(formData.date_released)}
+                                        // value={new Date(formData.date_released)}
+                                        />
+                                        <Label>Released</Label>
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Input type="select" onChange={this.handleForm} 
+                                        name="genre" 
+                                        value={formData.genre}
+                                        defaultValue={formData.genre}
+                                            > 
+                                            {getGenre ?
+                                                getGenre.map(genre => {
+                                                    return <option key={genre.id} value={genre.id}>{genre.NameOfGenre}</option>
+                                                })
+                                                : <option>Loading...</option>
+                                            }
+                                        </Input>
+                                        <Label>Genre</Label>
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Input type="textarea" onChange={this.handleForm} name="description" value={formData.description} required />
+                                        <Label>Description</Label>
+                                    </FormGroup>
                                 </div>
-                                <div>
-                                    <input onChange={this.handleForm} name="title" type="text" value={this.state.formData.title}  />
-                                    <label>Title</label>
-                                </div>
-                                <div>
-                                    <input onChange={this.handleForm} name="date_released" type="date"  />
-                                    <label>Released</label>
-                                </div>
-                                <div>
-                                    <select onChange={this.handleForm} name="genre">
-                                        {
-                                            this.props.state.genre.map(genre => {
-                                                return <option key={genre.id} value={genre.id}>{genre.NameOfGenre}</option>
-                                            })
-                                        }
-                                    </select>
-                                    <label>Genre</label>
-                                </div>
-                                <div>
-                                    <textarea onChange={this.handleForm} name="description" value={this.state.formData.description}  />
-                                    <label>Description</label>
-                                </div>
-                            </div>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button color="warning" className="ModalBtn" onClick={this.handleUpdate}>Save</Button>
-                        </ModalFooter>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button onClick={this.handleUpdate} color="warning" className="ModalBtn">Save</Button>
+                            </ModalFooter>
+                        {/* </Form> */}
                     </Modal>
                 </div>
                 <div className="pageDetail">
                     <div className="viewDetail">
-                        <img id="cover" src={this.state.dataApi.image} alt="" />
+                        <img id="cover" src={dataApi.image} alt="" />
                     </div>
                     <button id="back" onClick={this.back}>
                         <FontAwesomeIcon icon={ faArrowLeft } />
                     </button>
                     <div id="action">
-                        <Link onClick={this.props.toggle} to="#" id="edit">Edit</Link>
-                        <Link onClick={this.handleRemove} to="#" id="delete">Delete</Link>
+                        {
+                            this.props.user.userInfo.access === 'admin' ?
+                                <Fragment>
+                                    <Link onClick={this.props.openModal} to="#" id="edit">Edit</Link>
+                                    <Link onClick={this.handleRemove} to="#" id="delete">Delete</Link>
+                                </Fragment>
+                                :
+                                ''
+                        }
                     </div>
-                    <img id="vit" src={this.state.dataApi.image} alt=""/>
+                    <img id="vit" src={dataApi.image} alt=""/>
                     <div id="detailInfo">
-                        <button id="genre">{this.state.dataApi.genre}</button>
-                    <div id="btnborrow">
-                        <button id="borrow" onClick={this.handleTransaction}>borrow</button>
-                    </div>
-                    <div id="btnreturn">
-                        <button id="return" onClick={this.handleTransaction}>return</button>
-                    </div>
-                        <p id="title"> {this.state.dataApi.title} </p>
-                        <p id="Released">{this.state.date + " " + this.state.month + " " + this.state.year}</p>
-                        <p id="status"> {this.state.dataApi.status}</p>
-                        <p id="desc">  {this.state.dataApi.description} </p>
+                        <button id="genre">{dataApi.genre}</button>
+                        <div id="btnborrow">
+                            <button id="borrow" onClick={this.handleTransaction}>borrow</button>
+                        </div>
+                        <div id="btnreturn">
+                            <button id="return" onClick={this.handleTransaction}>return</button>
+                        </div>
+                        <p id="title"> {dataApi.title} </p>
+                        {/* <p id="Released">{new Date(dateSplit).toDateString()}</p> */}
+                        <p id="Released">{new Date(dataApi.date_released).toDateString()}</p>
+                        <p id="status"> {dataApi.status}</p>
+                        <p id="desc">  {dataApi.description} </p>
                     </div>
                 </div>
             </Fragment>
@@ -266,4 +291,24 @@ class ViewDetail extends Component {
     }
 }
 
-export default GlobalConsumer(ViewDetail)
+const mapStateToProps = state => {
+    return {
+        book: state.book,
+        modal: state.modal,
+        genre: state.genre,
+        user: state.user,
+    }
+}
+const mapDispatchToProps = dispatch => {
+    return {
+        UserInfo: () => dispatch(userInfo()),
+        DeleteBook: (id)=> dispatch(deleteBook(id)),
+        UpdateBook: (id, data) => dispatch(updateBook(id, data)),
+        Transaction: (query, id) => dispatch(transaction(query, id)),
+        Genre: () => dispatch(getGenre()),
+        getBookId: (id) => dispatch(getBookId(id)),
+        closeModal: () => dispatch(closeModal()),
+        openModal: () => dispatch(openModal())
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(ViewDetail)

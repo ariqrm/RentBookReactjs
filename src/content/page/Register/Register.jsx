@@ -1,45 +1,67 @@
 import React, { Component, Fragment } from 'react';
-import Axios from 'axios';
 import './Register.css';
 import { Link } from 'react-router-dom/cjs/react-router-dom';
+import { connect } from 'react-redux';
+import { signUp, signIn } from '../../../redux/Actions/Users';
+import ResponseModal from '../../../component/Modal/Response';
 
 class Register extends Component {
     state = {
         user: [],
+        data: [],
         formData: {
             email: "",
             username: "",
             full_name: "",
             password: ""
         },
+        Response: false,
         isUpdateData: false
     }
-    getPostAPI = () => {
-        Axios.post(`http://localhost:3010/user/register`, this.state.formData)
-            .then((response) => {
-                console.log(response);
-                this.setState({
-                    user: response.data
-                })
-                if(response.data.success === true){
-                    const dataUser = this.state.formData
-                    this.props.getPostAPILogin(dataUser)
-                    // window.location.replace("/home")
+    handleSignIn = (dataUser) => {
+        this.props.SignIn(dataUser)
+            .then((res) => {
+                const data = res.action.payload.data
+                if (data.success) {
+                    localStorage.setItem('Token=', JSON.stringify(data.data.token));
+                    localStorage.setItem('Data=', JSON.stringify(data.data.data));
+                    window.location.replace('/home')
+                } else {
+                    console.log("gagal")
                 }
             })
-            .catch(err => console.log(err))
+            .catch(err => console.log("error: ", err))
+
+    }
+    getPostAPI = () => {
+        const dataUser = this.state.formData
+        this.props.SignUp(dataUser)
+            .then((res) => {
+                const data = res.action.payload.data
+                if (data.success) {
+                    this.setState({
+                        data: data,
+                        Response: true,
+                    })
+                    this.handleSignIn(dataUser)
+                } else {
+                    console.log("error", dataUser)
+                    this.setState({
+                        data: data,
+                        Response: true,
+                    })
+                }
+            })
+            .catch(err => console.log("error: ", err))
     }
     handleRegister = (event) => {
         var newFormData = { ...this.state.formData };
         newFormData[event.target.name] = event.target.value;
-        console.log('form change', event.target.value);
-        console.log('name change', event.target.name);
         this.setState({
             formData: newFormData
         })
     }
     handleSubmit = () => {
-        console.log(this.state.formData)
         this.getPostAPI()
     }
     handleDataAuth = () => {
@@ -95,10 +117,22 @@ class Register extends Component {
                         <input type="button" onClick={() => this.props.history.push(`/Login`)} value="Sign In" />
                     </div>
                 </div>
+                <ResponseModal open={this.state.Response} data={this.state.data} />
             </Fragment>
 
         )
     }
 }
 
-export default Register
+const mapStateToProps = state => {
+    return {
+        user: state.user,
+    }
+}
+const mapDispatchToProps = dispatch => {
+    return {
+        SignUp: (data) => dispatch(signUp(data)),
+        SignIn: (data) => dispatch(signIn(data)),
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Register)

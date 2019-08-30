@@ -1,4 +1,5 @@
 .boxContent {
+    max-width: 1374px;
     position: absolute;
     margin-top: 1%;
     width: 100%;
@@ -7,27 +8,38 @@
     padding: 1%;
     align-content: center;
     background-color: #fff;
-    box-sizing: border-box;
+    /* box-sizing: border-box; */
 }
 .btnAvailable {
-    color: #383838;
+    color: #ffffff;
+    font-weight: bold;
+    text-shadow: 1px 1px gray;
     background-color: #40f00b;
     border: none;
     outline: 0;
     padding: 12px;
     border-radius: 5px;
-    position: absolute;
+    /* position: absolute; */
     top: 1%;
     left: 5%;
 }
 .btnBorrow {
-    color: #383838;
+    color: #ffffff;
+    font-weight: bold;
+    text-shadow: 1px 1px gray;
     background-color: #d9f00b;
     border: none;
     outline: 0;
     padding: 12px;
     border-radius: 5px;
-    position: absolute;
+    /* position: absolute; */
     top: 1%;
     left: 13%;
+}
+.boxContent p#filter{
+    padding: 10px;
+    left: 10%;
+}
+.boxLoad{
+    box-sizing: unset;
 }

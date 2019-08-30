@@ -1,79 +1,86 @@
 import React, { Component } from 'react';
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Carousel } from 'react-responsive-carousel';
 import Axios from 'axios';
+import PropTypes from 'prop-types';
+import Card from 'react-bootstrap/Card';
+import { Row, Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAngleRight, faAngleLeft } from '@fortawesome/free-solid-svg-icons';
+import './carousel.css'
+
+
+const handleGetDetail = (id) => {
+    window.location.href = `/home/detail-book/${id}`
+}
 
 class Carousel2 extends Component {
-    moveToSelected =(element)=> {
-
-    if (element == "next") {
-        var selected = $(".selected").next();
-    } else if (element == "prev") {
-        var selected = $(".selected").prev();
-    } else {
-        var selected = element;
+    constructor() {
+        super()
+        this.state = {
+            index: 2,
+            properties: [],
+            property: {},
+        }
     }
 
-    var next = $(selected).next();
-    var prev = $(selected).prev();
-    var prevSecond = $(prev).prev();
-    var nextSecond = $(next).next();
-
-    $(selected).removeClass().addClass("selected");
-
-    $(prev).removeClass().addClass("prev");
-    $(next).removeClass().addClass("next");
-
-    $(nextSecond).removeClass().addClass("nextRightSecond");
-    $(prevSecond).removeClass().addClass("prevLeftSecond");
-
-    $(nextSecond).nextAll().removeClass().addClass('hideRight');
-    $(prevSecond).prevAll().removeClass().addClass('hideLeft');
-
-}
-
-// Eventos teclado
-document.keydown = (e)=>{
-    switch (e.which) {
-        case 37: // left
-            moveToSelected('prev');
-            break;
-
-        case 39: // right
-            moveToSelected('next');
-            break;
-
-        default: return;
+    componentDidMount = () => {
+        //Carousel
+        Axios.get('http://localhost:3010/books?limit=6')
+            .then(res => {
+                this.setState({ properties: res.data.data, property: res.data.data[0] });
+            })
+            .catch(err => console.log('err = ', err));
     }
-    e.preventDefault();
-});
 
-$('#carousel div').click(function () {
-    moveToSelected($(this));
-});
+    nextProperty = () => {
+        const newIndex = this.state.index + 1;
+        this.setState({
+            property: this.state.properties[newIndex],
+            index: newIndex
+        })
+    }
 
-$('#prev').click(function () {
-    moveToSelected('prev');
-});
-
-$('#next').click(function () {
-    moveToSelected('next');
-});
+    prevProperty = () => {
+        const newIndex = this.state.index - 1;
+        this.setState({
+            property: this.state.properties[newIndex],
+            index: newIndex
+        })
+    }
 
     render() {
+        const { index, properties } = this.state;
         return (
-            <Carousel id="carousel" >
-                    {popularBooksList.map((book, index) => {
-                        return (
-                            <div key={index}>
-                                <img src={book.image} />
-                                <p className="legend">{book.title}</p>
-                            </div>
+            <Row className={`container1 cards-slider active-slide-${index}`}>
+                <div className="cards-slider-wrapper" style={{
+                    'transform': `translateX(-${index * (100 / properties.length)}%)`
+                }}>
+                    {
+                        properties.map((bookData, index) =>
+                            <Card className="card-carousel wrap" key={bookData.id} id={`card-${index}`} style={{ backgroundImage: `url(${bookData.image})` }} onClick={() => handleGetDetail(bookData.id)}>
+                                <Card.Body></Card.Body>
+                                <Card.Footer className="footer">
+                                    <h3 className="mb-2">{bookData.title}</h3>
+                                    {bookData.genre}
+                                </Card.Footer>
+                            </Card>
                         )
-                    })}
-            </Carousel>
+                    }
+                </div>
+                <div className="btn-slide">
+                    <Button variant="light" className="slide-left" onClick={() => this.prevProperty()} disabled={index === 0}>
+                        <FontAwesomeIcon icon={faAngleLeft} />
+                    </Button>
+                    <Button variant="light" className="slide-right" onClick={() => this.nextProperty()} disabled={index === properties.length - 1}>
+                        <FontAwesomeIcon icon={faAngleRight} />
+                    </Button>
+                </div>
+            </Row>
         )
-                
     }
 }
-export default Carousel2
+
+Carousel2.propTypes = {
+    property: PropTypes.object.isRequired
+}
+
+export default Carousel2;

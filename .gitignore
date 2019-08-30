@@ -21,3 +21,11 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+src/component/Navbar/Navbar context.jsx
+src/component/Modal/Add context.jsx
+src/component/Navbar/Profile.jsx
+src/component/Navbar/SearchBox context.jsx
+src/content/page/listCard/listCard context.jsx
+src/content/page/listCard/viewDetail context.jsx
+src/content/page/listCard/pageButton copy.jsx
+src/content/page/listCard/pageButton context.jsx

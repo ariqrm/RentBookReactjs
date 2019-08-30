@@ -1,115 +1,163 @@
 import React from 'react'
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
-import { GlobalConsumer } from '../../context/context'
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Input, Label, FormGroup, Form } from 'reactstrap'
 import { Link } from 'react-router-dom/cjs/react-router-dom.min'
+import { connect } from 'react-redux';
+import { addBook } from '../../redux/Actions/Books';
+import { getGenre } from '../../redux/Actions/Genres';
+import { openModal, closeModal } from '../../redux/Actions/Modals';
 import './Add.css'
-import Axios from 'axios'
+import ResponseModal from './Response';
 
-export class ModalExample extends React.Component {
-    state = {
-        book: [],
-        formData: {
-            Image: "",
-            Title: "",
-            DateReleased: "",
-            id_genre: 1,
-            id_status: 2,
-            Description: ""
-        },
-        isAddData: false
+export class AddModal extends React.Component {
+    constructor(props){
+        super(props)
+        this.state = {
+            getGenre: [],
+            bookAdded: [],
+            book: [],
+            formData: {
+                Image: "https://static9.depositphotos.com/1008244/1074/v/950/depositphotos_10745131-stock-illustration-open-book.jpg",
+                Title: "",
+                DateReleased: new Date().toISOString().split('T')[0],
+                id_genre: 1,
+                id_status: 2,
+                Description: ""
+            },
+            isAddData: false,
+        }
     }
+    
     handleHome = ()=> {
         this.setState({
             isAddData: false
         })
         window.location.reload()
     }
-    getPostAPI = () => {
-        const token = JSON.parse(localStorage.getItem("Token="))
-        Axios.post(`http://localhost:3010/books/`, this.state.formData, 
-            { headers: { Authorization: token }}
-        )
-            .then((response) => {
-                console.log(response);
-                this.setState({
-                    book: response.data,
-                    isAddData: true
-                })
-            })
-            .catch(err => console.log(err))
-    }
     handleAddBook = (event) => {
         var newFormData = { ...this.state.formData };
         newFormData[event.target.name] = event.target.value;
-        // console.log('form change', event.target.value);
-        // console.log('name change', event.target.name);
         this.setState({
             formData: newFormData
         })
     }
     handleSubmit = () => {
-        console.log(this.state.formData)
-        this.getPostAPI()
+        this.props.addBook(this.state.formData)
+            .then((res) => {
+                const data = res.action.payload.data
+                if (data.succes) {
+                    this.setState({
+                        isAddData: true,
+                        bookAdded: data,
+                    })
+                    this.props.closeModal()
+                } else {
+                    const data = {
+                        message: "access denied",
+                        icon: "faBan"
+                    }
+                    this.setState({
+                        isAddData: true,
+                        bookAdded: data
+                    })
+                }
+            })
+            .catch(err => {
+                console.log("error: ", err)
+                const data = {
+                    message: "access denied",
+                    icon: "faBan"
+                }
+                this.setState({
+                    isAddData: true,
+                    bookAdded: data
+                })
+            })
     }
-    closeNav = () => {
-        document.getElementById("mySidenav").style.width = "0";
-        document.getElementById("main").style.marginLeft = "0";
-        document.getElementById("mySidenav").style.display = "none";
+    componentDidMount = async () => {
+        await this.props.Genre();
+        this.setState({
+            getGenre: this.props.genre.genreList,
+        });
+    };
+    handleClick = ()=>{
+        this.props.openModal()
+        this.props.closeNav(true)
     }
     render() {
+        const { getGenre } = this.state
         return (
             <div>
-                <Link to="#" onClick={this.props.toggle}>Add Book</Link>
-                <Modal isOpen={this.props.state.modal} toggle={this.props.toggle} size="lg">
-                    <ModalHeader style={{ fontWeight: "bold", color: "black" }} toggle={this.props.toggle} charCode="x">Add Data</ModalHeader>
+                <Link to="#" onClick={this.handleClick}>Add Book{console.log(this.props.modal)}</Link>
+                <Modal isOpen={this.props.modal.myModal} toggle={this.props.closeModal} size="lg">
+                    <Form onSubmit={this.handleSubmit}>
+                    <ModalHeader style={{ fontWeight: "bold", color: "black" }} toggle={this.props.closeModal} charCode="x">Add Data</ModalHeader>
                     <ModalBody>
                         <div className="boxModal">
-                            <div>
-                                <input onChange={this.handleAddBook} name="Image" type="text" placeholder="Url Image" required />
-                                <label>Url image</label>
-                            </div>
-                            <div>
-                                <input onChange={this.handleAddBook} name="Title" type="text" placeholder="Title of books" required />
-                                <label>Title</label>
-                            </div>
-                            <div>
-                                <input onChange={this.handleAddBook} name="DateReleased" type="date" required />
-                                <label>Released</label>
-                            </div>
-                            <div>
-                                <select onChange={this.handleAddBook} name="id_genre">
-                                    {
-                                        this.props.state.genre.map(genre =>{
+                            <FormGroup>
+                                <Input onChange={this.handleAddBook} name="Image" type="text" placeholder="Url Image" required />
+                                <Label>Url image</Label>
+                            </FormGroup>
+                            <FormGroup>
+                                <Input onChange={this.handleAddBook} name="Title" type="text" placeholder="Title of books" required />
+                                <Label>Title</Label>
+                            </FormGroup>
+                            <FormGroup>
+                                <Input onChange={this.handleAddBook} name="DateReleased" value={this.state.formData.DateReleased} type="date" required />
+                                <Label>Released</Label>
+                            </FormGroup>
+                            <FormGroup>
+                                <Input type="select" onChange={this.handleAddBook} name="id_genre">
+                                    {getGenre ?
+                                        getGenre.map(genre =>{
                                             return <option key={genre.id} value={genre.id}>{genre.NameOfGenre}</option>
                                         })
+                                        : <option>Loading Fetch...</option>
                                     }
-                                </select>
-                                <label>Genre</label>
-                            </div>
-                            <div>
-                                <textarea onChange={this.handleAddBook} name="Description" placeholder="Description" required />
-                                <label>Description</label>
-                            </div>
+                                </Input>
+                                <Label>Genre</Label>
+                            </FormGroup>
+                            <FormGroup>
+                                <Input type="textarea" onChange={this.handleAddBook} name="Description" placeholder="Description" required />
+                                <Label>Description</Label>
+                            </FormGroup>
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="warning" className="ModalBtn" onClick={this.handleSubmit}>Save</Button>
+                        <Button color="warning" className="ModalBtn">Save</Button>
                     </ModalFooter>
+                    </Form>
                 </Modal>
-                <Modal isOpen={this.state.isAddData}>
+                <ResponseModal open={this.state.isAddData} data={this.state.bookAdded} />
+                {/* <Modal isOpen={this.state.isAddData}>
                     <ModalHeader style={{ textAlign: "center", fontWeight: "bold", color: "black" }}>Success</ModalHeader>
                     <ModalBody>
                         <div className="boxModal">
                             <p style={{ textAlign: "center", fontWeight: "bold", color: "black" }}>Success Add Book</p>
+                            
                         </div>
                     </ModalBody>
                     <ModalFooter>
                         <Button color="success" className="ModalBtn" onClick={this.handleHome}>Ok</Button>
                     </ModalFooter>
-                </Modal>
+                </Modal> */}
             </div>
         );
     }
 }
 
-export default GlobalConsumer(ModalExample);
+const mapStateToProps = state => {
+    return {
+        book: state.book,
+        modal: state.modal,
+        genre: state.genre,
+    }
+}
+const mapDispatchToProps = dispatch =>{
+    return {
+        Genre: ()=> dispatch(getGenre()),
+        addBook: (data) => dispatch(addBook(data)),
+        closeModal: ()=> dispatch(closeModal()),
+        openModal: ()=> dispatch(openModal())
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(AddModal)

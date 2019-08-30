@@ -32,7 +32,7 @@ span.library {
     width: 187px;
     height: 47px;
     top: 10px;
-    font-family: Airbnb Cereal App;
+    font-family: Airbnb Cereal App Book;
     font-size: 20px;
     line-height: 39px;
 
@@ -79,10 +79,9 @@ span.library {
     left: 30px;
     width: 128%;
     height: 18px;
-    padding: 5px;
     margin: 5px 0;
     border: none;
-    font-family: Airbnb Cereal App;
+    font-family: Airbnb Cereal App Book;
     font-size: 17px;
     color: #424242;
     outline: none;
@@ -159,4 +158,31 @@ span.library {
     .sidenav a {
         font-size: 18px;
     }
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover:not(.active) {
+    background-color: #111;
+}
+
+.active {
+    background-color: #4CAF50;
 }

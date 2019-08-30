@@ -6,7 +6,7 @@
 .viewDetail {
     position: absolute;
     overflow: hidden;
-    height: 50%;
+    height: 45%;
     width: 100%;
     /* height: 100%; */
 }
@@ -27,8 +27,8 @@
 .pageDetail img#vit {
     position: absolute;
     width: 16%;
-    min-height: 39%;
-    max-height: 39%;
+    min-height: 261px;
+    max-height: 261px;
     top: 25%;
     box-shadow: 7px 10px 10px 0 rgba(0, 0, 0, 0.2);
     /* transition: 0.3s; */
