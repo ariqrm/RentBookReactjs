@@ -11,6 +11,7 @@ import explore from '../page/listCard/explore';
 import MyHistory from '../page/listCard/history'
 import Profile from '../../component/Navbar/Profile';
 import Carousel2 from '../../component/caraosel2';
+import NavbarSpa from '../../component/Navbar/NavbarSpa';
 
 
 const NoMatch = () => {
@@ -25,12 +26,13 @@ class Home extends Component {
                     <div id="main" >
                         <main> 
                             <Switch>
-                                <Route path='/' exact component={Login} />
+                                <Route path='/' exact component={listCard} />
                                 <Route path='/Login' component={Login} />
                                 <Route path='/Yo' component={Carousel2} />
                                 <Route path='/Register' component={Register} />
                                 <Route path='/home' exact component={listCard} />
-                                <Route path='/explore' exact component={explore} />
+                                <Route path='/homespa' exact component={NavbarSpa} />
+                                <Route path='/home/explore' exact component={explore} />
                                 <Route path='/home/history' exact component={MyHistory} />
                                 <Route path='/home/CardBook' component={listBook} />
                                 <Route path='/home/modal' exact component={ModalAdd} />

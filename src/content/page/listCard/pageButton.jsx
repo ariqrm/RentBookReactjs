@@ -25,7 +25,6 @@ class PageButton extends Component {
     }
     render() {
         const data = this.props.data
-        console.log('oyoyoy', data.checkPage.length+1)
         return (
             <div className="counter">
                 {

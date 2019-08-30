@@ -53,7 +53,6 @@ export class AddModal extends React.Component {
                 } else {
                     const data = {
                         message: "access denied",
-                        icon: "faBan"
                     }
                     this.setState({
                         isAddData: true,
@@ -65,7 +64,6 @@ export class AddModal extends React.Component {
                 console.log("error: ", err)
                 const data = {
                     message: "access denied",
-                    icon: "faBan"
                 }
                 this.setState({
                     isAddData: true,

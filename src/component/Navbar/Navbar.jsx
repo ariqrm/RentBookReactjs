@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { getGenre } from '../../redux/Actions/Genres';
 import { getYear, getFilterBook } from '../../redux/Actions/Books';
 import { userInfo } from '../../redux/Actions/Users';
+import { getReturn, getBorrow } from '../../redux/Actions/Transaction';
 
 class NavBar extends Component {
     constructor(props){
@@ -38,7 +39,8 @@ class NavBar extends Component {
         }
     }
     handleHome = () => {
-        document.location.replace("http://localhost:3030/home")
+        // document.location.replace("http://localhost:3030/home")
+        this.props.history.push('/home')
     }
     handleReload = () => {
         document.location.reload()
@@ -75,6 +77,9 @@ class NavBar extends Component {
         await this.props.Genre()
         await this.props.Year()
         await this.props.UserInfo()
+        const id_users = this.props.user.userInfo.id
+        await this.props.GetBorrow(id_users)
+        await this.props.GetReturn(id_users)
         this.setState({
             getGenre: this.props.genre.genreList,
             getYear: this.props.book.yearList,
@@ -87,7 +92,7 @@ class NavBar extends Component {
                 <div id="mySidenav" className="sidenav">
                     <img src="http://clws.karnataka.gov.in/assets/icons/manager.png" alt=""/>
                     <p>{this.props.user.userInfo.Username}</p>
-                    <Link onClick={this.handleSidebar} to="/explore">Explore</Link>
+                    <Link onClick={this.handleSidebar} to="/home/explore">Explore</Link>
                     <Link onClick={this.handleSidebar} to="/home/history">History</Link>
                     {
                         this.props.user.userInfo.access === 'admin' ? 
@@ -100,7 +105,7 @@ class NavBar extends Component {
                 <nav className="navigation">
                     <span id="burger" onClick={this.handleSidebar}>&#9776;</span>
                     <div className="dropdown">
-                        <Link to="#" onClick={this.handleReload}>
+                        <Link to="/home">
                             <button className="dropbtn">All Category <FontAwesomeIcon icon={faSortDown} /></button>
                         </Link>
                         <div className="dropdown-content">
@@ -118,7 +123,7 @@ class NavBar extends Component {
                         </div>
                     </div>
                     <div className="dropdown">
-                    <Link to="#" onClick={this.handleReload}>
+                    <Link to="/home">
                         <button className="dropbtn">All Time <FontAwesomeIcon icon={faSortDown} /></button>
                     </Link>
                         <div className="dropdown-content">
@@ -137,8 +142,10 @@ class NavBar extends Component {
                         </div>
                     </div>
                     <SearchBox search={this.handleSearch} />
-                    <img onClick={this.handleHome} src="https://s3-alpha-sig.figma.com/img/5ef4/f6ec/e84f39e17cc61b2c69a33b9ad6d7736e?Expires=1567382400&Signature=BIb3Rr5PdM4FgT80aIXHtY-1waIiqI3usAtfDL79yrRiUkYzQDJbXcnFgtqcRMfZe2tglbEO2yRBc-vbg5e4FetONSgBVInok4ow7OzjSep5aqbuzcVUoGbqY91URULF1rPQbfqlaQS0JKAVsZkNqGrpnFzFLVQNIQek~vMu5A6oRw2fqKchwZbuEdTY37mRx9G6W5gG1uISPGTreyWYTkkz93Op4-j30UHkcZMGDpmn6qbiDzDdK5mk1He5aqAugRNqEGuEbs3WfvgrDviUeXeLeWPVuwVuQXbbxbWYD8AMBkcTGZPOfhDM4znqjO~K-37~~ndicWGy~8s7yDZ6fg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA" alt="" />                    
-                    <span onClick={this.handleHome} className="library" >Library</span>
+                    <Link to="/home">
+                        <img src="https://s3-alpha-sig.figma.com/img/5ef4/f6ec/e84f39e17cc61b2c69a33b9ad6d7736e?Expires=1567382400&Signature=BIb3Rr5PdM4FgT80aIXHtY-1waIiqI3usAtfDL79yrRiUkYzQDJbXcnFgtqcRMfZe2tglbEO2yRBc-vbg5e4FetONSgBVInok4ow7OzjSep5aqbuzcVUoGbqY91URULF1rPQbfqlaQS0JKAVsZkNqGrpnFzFLVQNIQek~vMu5A6oRw2fqKchwZbuEdTY37mRx9G6W5gG1uISPGTreyWYTkkz93Op4-j30UHkcZMGDpmn6qbiDzDdK5mk1He5aqAugRNqEGuEbs3WfvgrDviUeXeLeWPVuwVuQXbbxbWYD8AMBkcTGZPOfhDM4znqjO~K-37~~ndicWGy~8s7yDZ6fg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA" alt="" />                    
+                        <span className="library" >Library</span>
+                    </Link>
                 </nav> 
             </Fragment>
         )
@@ -157,6 +164,8 @@ const mapDispatchToProps = dispatch => {
         UserInfo: () => dispatch(userInfo()),
         Genre: () => dispatch(getGenre()),
         Year: () => dispatch(getYear()),
+        GetReturn: (id) => dispatch(getReturn(id)),
+        GetBorrow: (id) => dispatch(getBorrow(id)),
         Book: (mTitle, mColoum, mPage, mavailable) => dispatch(getFilterBook(mTitle, mColoum, mPage, mavailable)),
     }
 }

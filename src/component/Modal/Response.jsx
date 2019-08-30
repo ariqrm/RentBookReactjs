@@ -20,9 +20,11 @@ class ResponseModal extends Component {
         if (this.props.data.message === "book data updated"){
             window.location.reload()
         } else if (this.props.data.message === "book deleted"){
-            window.location.replace ('/home')
+            // window.location.replace ('/home')
+            this.props.history.push('/home')
         }else {
-            window.location.replace('/home')
+            // window.location.replace('/home')
+            this.props.history.push('/home')
         }
     }
     render(){
