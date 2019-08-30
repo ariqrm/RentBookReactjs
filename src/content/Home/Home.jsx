@@ -31,7 +31,7 @@ class Home extends Component {
                                 <Route path='/Yo' component={Carousel2} />
                                 <Route path='/Register' component={Register} />
                                 <Route path='/home' exact component={listCard} />
-                                {/* <Route path='/homespa' exact component={NavbarSpa} /> */}
+                                <Route path='/homespa' exact component={NavbarSpa} />
                                 <Route path='/home/explore' exact component={explore} />
                                 <Route path='/home/history' exact component={MyHistory} />
                                 <Route path='/home/CardBook' component={listBook} />
