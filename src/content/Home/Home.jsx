@@ -9,7 +9,7 @@ import ModalAdd from '../../component/Modal/Add';
 import ViewDetail from '../page/listCard/viewDetail';
 import explore from '../page/listCard/explore';
 import MyHistory from '../page/listCard/history'
-import Profile from '../../component/Navbar/Profile';
+// import Profile from '../../component/Navbar/Profile';
 import Carousel2 from '../../component/caraosel2';
 import NavbarSpa from '../../component/Navbar/NavbarSpa';
 
@@ -38,8 +38,8 @@ class Home extends Component {
                                 <Route path='/home/modal' exact component={ModalAdd} />
                                 <Route path='/home/detail-book/:id' component={ViewDetail} />
                                 {/* <Route path='/home/profile' component={profile} /> */}
-                                <Route path='/home/profile' 
-                                render={props => (<Profile {...props}/>)} />
+                                {/* <Route path='/home/profile' 
+                                render={props => (<Profile {...props}/>)} /> */}
                                 <Route component={NoMatch} />
                             </Switch>
                         </main>
