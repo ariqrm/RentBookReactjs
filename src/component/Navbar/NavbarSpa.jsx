@@ -12,7 +12,7 @@ import { getGenre } from '../../redux/Actions/Genres';
 import { getYear, getFilterBook } from '../../redux/Actions/Books';
 import { userInfo } from '../../redux/Actions/Users';
 import { getReturn, getBorrow } from '../../redux/Actions/Transaction';
-import Profile from './Profile';
+// import Profile from './Profile';
 
 const NoMatch = () => {
     return <h2>404, Not Found</h2>
@@ -153,8 +153,8 @@ class NavBarSpa extends Component {
                     </Link>
                 </nav>
                 <Route />
-                <Route path='/homespa/profile'
-                    render={props => (<Profile {...props} />)} />
+                {/* <Route path='/homespa/profile'
+                    render={props => (<Profile {...props} />)} /> */}
                 <Route component={NoMatch} />
             </Fragment>
         )
